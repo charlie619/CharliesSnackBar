@@ -3,28 +3,33 @@
 @{
     ViewData["Title"] = "Details";
 }
+<br />
+<h2>Category Type Details</h2>
+<br />
 
-<h2>Details</h2>
+<div class="form-border">
 
-<div>
-    <h4>Category</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.DsplayOrder)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.DsplayOrder)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <fieldset disabled>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="Name" class="custom-label"></label>
+            </div>
+            <div class="col-4">
+                <input asp-for="Name" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="DsplayOrder" class="custom-label"></label>
+            </div>
+            <div class="col-4">
+                <input asp-for="DsplayOrder" class="form-control" />
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="form-group">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-success">Back to List</a>
+    </div>
 </div>
