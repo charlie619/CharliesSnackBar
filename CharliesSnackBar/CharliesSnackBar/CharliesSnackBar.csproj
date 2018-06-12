@@ -5,6 +5,11 @@
     <UserSecretsId>aspnet-CharliesSnackBar-179A2DD8-407E-452C-A5B1-7B582477064C</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20180612114038_addSubCategory.cs" />
+    <Compile Remove="Data\Migrations\20180612114038_addSubCategory.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
