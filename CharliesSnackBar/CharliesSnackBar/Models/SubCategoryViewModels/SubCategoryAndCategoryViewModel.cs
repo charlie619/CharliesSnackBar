@@ -14,7 +14,7 @@ namespace CharliesSnackBar.Models.SubCategoryViewModels
         public List<string> SubCategoryList { get; set; }
 
         [Display(Name ="New Sub Category")]
-        public bool isNew { get; set; }
+        public bool IsNew { get; set; }
 
         public string StatusMessage { get; set; }
     }
