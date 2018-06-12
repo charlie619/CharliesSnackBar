@@ -7,8 +7,9 @@
 <h2>Index</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @Html.Partial("_CreateButtonPartial")
 </p>
+<div class="form-border">
 <table class="table">
     <thead>
         <tr>
@@ -39,3 +40,4 @@
 }
     </tbody>
 </table>
+</div>
