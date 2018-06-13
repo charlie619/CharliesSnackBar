@@ -176,5 +176,34 @@ namespace CharliesSnackBar.Controllers
 
             return View(subCategory);
         }
+
+        //Get Delete
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var subCategory = await _db.SubCategory.Include(x => x.Category).SingleOrDefaultAsync(x => x.Id == id);
+            if (subCategory == null)
+            {
+                return NotFound();
+            }
+
+            return View(subCategory);
+        }
+
+        //POST Delete
+        [HttpPost,ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var subCategory = await _db.SubCategory.SingleOrDefaultAsync(x => x.Id == id);
+            _db.SubCategory.Remove(subCategory);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
