@@ -114,5 +114,50 @@ namespace CharliesSnackBar.Controllers
             };
             return View(model);
         }
+
+        //Post Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, SubCategoryAndCategoryViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var subCategoryExists = _db.SubCategory
+                    .Where(x => x.Name == model.SubCategory.Name).Count();
+
+                var subCatAndCatExists = _db.SubCategory
+                    .Where(x => x.Name == model.SubCategory.Name && x.CategoryId == model.SubCategory
+                    .CategoryId).Count();
+
+                if (subCategoryExists == 0)
+                {
+                    StatusMessage = "Error : Sub Category does not exist. You can not add a new subcategory here.";
+                }
+                else
+                {
+                    if (subCatAndCatExists > 0)
+                    {
+                        StatusMessage = "Error : Category and Sub Category combination exist.";
+                    }
+                    else
+                    {
+                        var subCatFromDb = _db.SubCategory.Find(id);
+                        subCatFromDb.Name = model.SubCategory.Name;
+                        subCatFromDb.CategoryId = model.SubCategory.CategoryId;
+                        await _db.SaveChangesAsync();
+
+                        return RedirectToAction(nameof(Index));
+                    }                    
+                }
+            }
+            var modelVM = new SubCategoryAndCategoryViewModel()
+            {
+                CategoryList = _db.Category.ToList(),
+                SubCategory = model.SubCategory,
+                SubCategoryList = _db.SubCategory.Select(x => x.Name).Distinct().ToList(),
+                StatusMessage = StatusMessage
+            };
+            return View(modelVM);
+        }
     }
 }
