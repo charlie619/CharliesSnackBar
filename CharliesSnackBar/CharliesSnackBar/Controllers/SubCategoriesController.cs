@@ -159,5 +159,22 @@ namespace CharliesSnackBar.Controllers
             };
             return View(modelVM);
         }
+
+        //Get Details
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var subCategory = await _db.SubCategory.Include(x => x.Category).SingleOrDefaultAsync(x => x.Id == id);
+            if (subCategory == null)
+            {
+                return NotFound();
+            }
+
+            return View(subCategory);
+        }
     }
 }
