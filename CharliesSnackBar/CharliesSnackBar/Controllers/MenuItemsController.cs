@@ -6,6 +6,7 @@ using CharliesSnackBar.Data;
 using CharliesSnackBar.Models.MenuItemViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CharliesSnackBar.Controllers
 {
@@ -29,9 +30,10 @@ namespace CharliesSnackBar.Controllers
         }
     
         //Get : MenuItems
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var menuitems = _db.MenuItem.Include(x => x.Category).Include(x => x.SubCategory);
+            return View(await menuitems.ToListAsync());
         }
     }
 }
