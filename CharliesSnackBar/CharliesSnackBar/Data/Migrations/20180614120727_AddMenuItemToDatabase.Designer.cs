@@ -11,9 +11,10 @@ using System;
 namespace CharliesSnackBar.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180614120727_AddMenuItemToDatabase")]
+    partial class AddMenuItemToDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,6 +94,8 @@ namespace CharliesSnackBar.Data.Migrations
 
                     b.Property<int>("CategoryId");
 
+                    b.Property<int?>("Categoryd");
+
                     b.Property<string>("Description");
 
                     b.Property<string>("Image");
@@ -108,7 +111,7 @@ namespace CharliesSnackBar.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("Categoryd");
 
                     b.HasIndex("SubCategoryId");
 
@@ -244,8 +247,7 @@ namespace CharliesSnackBar.Data.Migrations
                 {
                     b.HasOne("CharliesSnackBar.Models.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("Categoryd");
 
                     b.HasOne("CharliesSnackBar.Models.SubCategory", "SubCategory")
                         .WithMany()

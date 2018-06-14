@@ -16,7 +16,7 @@ namespace CharliesSnackBar.Data
         }
         public DbSet<Category> Category { get; set; }
         public DbSet<SubCategory> SubCategory { get; set; }
-
+        public DbSet<MenuItem> MenuItem { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
