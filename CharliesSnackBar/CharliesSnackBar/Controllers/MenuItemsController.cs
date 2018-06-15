@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CharliesSnackBar.Data;
+using CharliesSnackBar.Models;
 using CharliesSnackBar.Models.MenuItemViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace CharliesSnackBar.Controllers
@@ -34,6 +36,22 @@ namespace CharliesSnackBar.Controllers
         {
             var menuitems = _db.MenuItem.Include(x => x.Category).Include(x => x.SubCategory);
             return View(await menuitems.ToListAsync());
+        }
+
+        //Get : MenuItem Create
+        public IActionResult Create()
+        {
+            return View(MenuItemVM);
+        }
+
+        public JsonResult GetSubCategory(int CategoryId)
+        {
+            var subCategoryList = new List<SubCategory>();
+            subCategoryList = (from subCategory in _db.SubCategory
+                               where subCategory.CategoryId == CategoryId
+                               select subCategory).ToList();
+
+            return Json(new SelectList(subCategoryList, "Id", "Name"));
         }
     }
 }
