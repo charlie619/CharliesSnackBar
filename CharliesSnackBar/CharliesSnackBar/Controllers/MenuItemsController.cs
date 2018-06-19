@@ -89,6 +89,7 @@ namespace CharliesSnackBar.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
         public JsonResult GetSubCategory(int CategoryId)
         {
             var subCategoryList = new List<SubCategory>();
@@ -97,6 +98,24 @@ namespace CharliesSnackBar.Controllers
                                select subCategory).ToList();
 
             return Json(new SelectList(subCategoryList, "Id", "Name"));
+        }
+
+        //GET : Edit MenuItem
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id==null)
+            {
+                return NotFound();
+            }
+
+            MenuItemVM.MenuItem = await _db.MenuItem.Include(x => x.Category).Include(x => x.SubCategory).SingleOrDefaultAsync(x => x.Id == id);
+            MenuItemVM.SubCategory = _db.SubCategory.Where(x => x.CategoryId == MenuItemVM.MenuItem.CategoryId).ToList();
+
+            if (MenuItemVM.MenuItem == null)
+            {
+                return NotFound();
+            }
+            return View(MenuItemVM);
         }
     }
 }
