@@ -118,7 +118,7 @@ namespace CharliesSnackBar.Controllers
             return View(MenuItemVM);
         }
 
-        //POST : Post Edit Menu Items
+        //POST : Edit Menu Items
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id)
@@ -178,5 +178,23 @@ namespace CharliesSnackBar.Controllers
             MenuItemVM.SubCategory = _db.SubCategory.Where(x => x.CategoryId == MenuItemVM.MenuItem.CategoryId).ToList();
             return View(MenuItemVM);
         }
+
+        //GET : Details Menu Items
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MenuItemVM.MenuItem = await _db.MenuItem.Include(x => x.Category).Include(x => x.SubCategory).SingleOrDefaultAsync(x => x.Id == id);
+
+            if (MenuItemVM.MenuItem == null)
+            {
+                return NotFound();
+            }
+            return View(MenuItemVM);
+        }
+
     }
 }
