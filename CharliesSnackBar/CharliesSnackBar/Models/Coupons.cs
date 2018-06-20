@@ -25,7 +25,7 @@ namespace CharliesSnackBar.Models
         public double Discount { get; set; }
         [Required]
         public double MinimumAmount { get; set; }
-        [Required]
+        //Removed [Required]
         public byte[] Picture { get; set; }
         public bool IsActive { get; set; }
     }
