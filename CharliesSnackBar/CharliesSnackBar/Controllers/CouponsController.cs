@@ -115,5 +115,34 @@ namespace CharliesSnackBar.Controllers
             }
             return View(coupons);
         }
+
+        //GET : Delete Coupons
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var coupon = await _db.Coupons.SingleOrDefaultAsync(x => x.Id == id);
+
+            if (coupon == null)
+            {
+                return NotFound();
+            }
+
+            return View(coupon);
+        }
+
+        //Post : Delete Coupons
+        [HttpPost,ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var coupon = await _db.Coupons.SingleOrDefaultAsync(x => x.Id == id);
+            _db.Coupons.Remove(coupon);
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
