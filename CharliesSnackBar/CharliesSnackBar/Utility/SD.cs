@@ -8,5 +8,10 @@ namespace CharliesSnackBar.Utility
     public class SD
     {
         public const string DefaultFoodmage = "default_food.png";
+
+        public const string AdminEndUser = "Admin";
+
+        public const string CustomerEndUser = "Customer";
+
     }
 }
