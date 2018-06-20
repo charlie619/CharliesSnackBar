@@ -141,6 +141,7 @@ namespace CharliesSnackBar.Controllers
         {
             var coupon = await _db.Coupons.SingleOrDefaultAsync(x => x.Id == id);
             _db.Coupons.Remove(coupon);
+            await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
