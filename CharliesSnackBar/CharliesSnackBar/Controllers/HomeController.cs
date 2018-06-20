@@ -5,29 +5,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CharliesSnackBar.Models;
+using CharliesSnackBar.Data;
+using CharliesSnackBar.Models.HomeViewModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace CharliesSnackBar.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly ApplicationDbContext _db;
+
+        public HomeController(ApplicationDbContext db)
         {
-            return View();
+            _db = db;
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> Index()
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
+            var IndexVM = new IndexViewModel()
+            {
+                MenuItem = await _db.MenuItem.Include(x => x.Category).Include(x => x.SubCategory).ToListAsync(),
+                Category = _db.Category.OrderBy(x => x.DsplayOrder),
+                Coupons = _db.Coupons.Where(x =>x.IsActive == true).ToList()
+            };
+            return View(IndexVM);
+        }       
 
         public IActionResult Error()
         {
