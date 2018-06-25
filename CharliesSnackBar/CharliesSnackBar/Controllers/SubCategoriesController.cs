@@ -5,11 +5,15 @@ using System.Threading.Tasks;
 using CharliesSnackBar.Data;
 using CharliesSnackBar.Models;
 using CharliesSnackBar.Models.SubCategoryViewModels;
+using CharliesSnackBar.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CharliesSnackBar.Controllers
 {
+    [Authorize(Roles = SD.AdminEndUser)]
+
     public class SubCategoriesController : Controller
     {
         private readonly ApplicationDbContext _db;

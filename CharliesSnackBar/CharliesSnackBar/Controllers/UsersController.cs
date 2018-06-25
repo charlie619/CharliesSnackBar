@@ -13,6 +13,7 @@ using CharliesSnackBar.Utility;
 
 namespace CharliesSnackBar.Controllers
 {
+    [Authorize(Roles =SD.AdminEndUser)]
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext _context;

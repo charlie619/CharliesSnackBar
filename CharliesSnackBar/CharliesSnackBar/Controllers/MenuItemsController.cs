@@ -7,6 +7,7 @@ using CharliesSnackBar.Data;
 using CharliesSnackBar.Models;
 using CharliesSnackBar.Models.MenuItemViewModels;
 using CharliesSnackBar.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CharliesSnackBar.Controllers
 {
+    [Authorize(Roles = SD.AdminEndUser)]
+
     public class MenuItemsController : Controller
     {
         private readonly ApplicationDbContext _db;

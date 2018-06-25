@@ -5,11 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using CharliesSnackBar.Data;
 using CharliesSnackBar.Models;
+using CharliesSnackBar.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CharliesSnackBar.Controllers
 {
+    [Authorize(Roles = SD.AdminEndUser)]
+
     public class CouponsController : Controller
     {
         private readonly ApplicationDbContext _db;
