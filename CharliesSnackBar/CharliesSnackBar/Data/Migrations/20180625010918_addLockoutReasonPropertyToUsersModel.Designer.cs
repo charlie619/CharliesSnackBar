@@ -11,9 +11,10 @@ using System;
 namespace CharliesSnackBar.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180625010918_addLockoutReasonPropertyToUsersModel")]
+    partial class addLockoutReasonPropertyToUsersModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
