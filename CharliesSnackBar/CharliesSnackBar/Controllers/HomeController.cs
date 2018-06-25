@@ -24,12 +24,31 @@ namespace CharliesSnackBar.Controllers
         {
             var IndexVM = new IndexViewModel()
             {
-                MenuItem = await _db.MenuItem.Include(x => x.Category).Include(x => x.SubCategory).ToListAsync(),
+                MenuItem = await _db.MenuItem.Include(x => x.Category)
+                .Include(x => x.SubCategory).ToListAsync(),
+
                 Category = _db.Category.OrderBy(x => x.DsplayOrder),
                 Coupons = _db.Coupons.Where(x =>x.IsActive == true).ToList()
             };
             return View(IndexVM);
-        }       
+        }      
+        
+        // GET : Details
+        public async Task<IActionResult> Details(int id)
+        {
+            var menuItemFromDb = await _db.MenuItem.Include(x => x.Category)
+                .Include(x => x.SubCategory)
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            var cartObj = new ShoppingCart()
+            {
+                MenuItem = menuItemFromDb,
+                MenuItemId = menuItemFromDb.Id
+            };
+
+            return View(cartObj);
+        }
 
         public IActionResult Error()
         {
