@@ -10,6 +10,7 @@ using CharliesSnackBar.Models.HomeViewModel;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace CharliesSnackBar.Controllers
 {
@@ -81,6 +82,10 @@ namespace CharliesSnackBar.Controllers
                 }
 
                 await _db.SaveChangesAsync();
+
+                var count = _db.ShoppingCart.Where(x => x.ApplicationUserId == cartObj.ApplicationUserId).ToList().Count();
+                HttpContext.Session.SetInt32("CartCount", count);
+
                 return RedirectToAction(nameof(Index));
             }
             else
