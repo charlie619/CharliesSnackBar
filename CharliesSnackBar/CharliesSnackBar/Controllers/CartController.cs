@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CharliesSnackBar.Data;
 using CharliesSnackBar.Models;
 using CharliesSnackBar.Models.OrderDetailsViewModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CharliesSnackBar.Controllers
@@ -52,5 +53,39 @@ namespace CharliesSnackBar.Controllers
             detailCart.OrderHeader.PickUp = DateTime.Now;
             return View(detailCart);
         }
+
+        // Adding 1 count of an item in shopping cart
+        public IActionResult Plus(int cartId)
+        {
+            var cart = _db.ShoppingCart.Where(x => x.Id == cartId).FirstOrDefault();
+            cart.Count += 1;
+            _db.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Reducing 1 count of an item in shopping cart
+        public IActionResult Minus(int cartId)
+        {
+            var cart = _db.ShoppingCart.Where(x => x.Id == cartId).FirstOrDefault();
+            if (cart.Count==1)
+            {
+                _db.ShoppingCart.Remove(cart);
+                _db.SaveChanges();
+
+                var cnt = _db.ShoppingCart.Where(x => x.ApplicationUserId == cart.ApplicationUserId).ToList().Count();
+                HttpContext.Session.SetInt32("CartCount", cnt);
+            }
+            else
+            {
+                cart.Count -= 1;
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
     }
 }
