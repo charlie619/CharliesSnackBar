@@ -79,7 +79,7 @@
                         <label class="custom-label">Pick Up Time : </label>
                     </div>
                     <div class="col-3">
-                        <input asp-for="@Model.OrderHeader.PickUp" id="timepicicker" type="text" class="form-control" />
+                        <input asp-for="@Model.OrderHeader.PickUp" id="timepicker" value="" type="text" class="form-control" />
                     </div>
                 </div>
                 <div class="row">
@@ -112,3 +112,49 @@
     }
 
 </form>
+
+@section Scripts{ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js"></script>
+    <script>
+        function validateInput() {
+            var time = document.getElementById("timepicker").value;
+            if (time.toString() == "") {
+                alert("Please select pickup time");
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+
+        $(document).ready(function () {
+            var curDt = new Date();
+            //12pm to 10pm
+            var minTime = "";
+            if (curDt.getHours() < 11) {
+                minTime = '12:00pm';
+            }
+            else {
+                if (curDt.getMinutes() < 30) {
+                    minTime = (curDt.getHours() + 1).toString() + ':30pm';
+                }
+                else {
+                    minTime = (curDt.getHours() + 2).toString() + ':00pm';
+
+                }
+            }
+            //No More Orders
+            if (curDt.getHours() > 21) {
+                $('timepicker').prop('disabled', true);
+                $('btnPlaceOrder').prop('disabled', true);
+                $('shopClosed').show();
+            }
+
+            $('#timepicker').timepicker({
+                'minTime': minTime,
+                'maxTime': '09:00pm'
+            })
+        })
+    </script>
+}
