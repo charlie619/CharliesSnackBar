@@ -68,6 +68,8 @@ namespace CharliesSnackBar
 
             app.UseAuthentication();
 
+            app.UseSession();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

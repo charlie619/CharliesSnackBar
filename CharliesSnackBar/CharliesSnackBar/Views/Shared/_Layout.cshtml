@@ -1,4 +1,7 @@
 ﻿@using CharliesSnackBar.Utility
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -49,22 +52,32 @@
                         </div>
                     </li>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Order
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Manage Order</a>
-                        <a class="dropdown-item" href="#">Order Pickup</a>
-                        <a class="dropdown-item" href="#">Download Order Details</a>
-                    </div>
-                </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Order
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Manage Order</a>
+                            <a class="dropdown-item" href="#">Order Pickup</a>
+                            <a class="dropdown-item" href="#">Download Order Details</a>
+                        </div>
+                    </li>
                 }
                 @if (User.IsInRole(SD.AdminEndUser))
                 {
-                    <li style="color:white;">
-                        <a href="#" class="nav-link"><i class="fas fa-shopping-cart"></i>&nbsp;(0)</a>
-                    </li>
+                    @if (HttpContextAccessor.HttpContext.Session.GetInt32("CartCount") != null)
+                    {
+                        <li style="color:white;">
+                            <a href="#" class="nav-link"><i class="fas fa-shopping-cart"></i>&nbsp;(@HttpContextAccessor.HttpContext.Session.GetInt32("CartCount"))</a>
+                        </li>
+
+                    }
+                    else
+                    {
+                        <li style="color:white;">
+                            <a href="#" class="nav-link"><i class="fas fa-shopping-cart"></i>&nbsp;(0)</a>
+                        </li>
+                    }
                 }
             </ul>
         </div>

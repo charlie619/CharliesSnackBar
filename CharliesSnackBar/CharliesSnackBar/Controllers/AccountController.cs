@@ -15,6 +15,7 @@ using CharliesSnackBar.Models.AccountViewModels;
 using CharliesSnackBar.Services;
 using CharliesSnackBar.Data;
 using CharliesSnackBar.Utility;
+using Microsoft.AspNetCore.Http;
 
 namespace CharliesSnackBar.Controllers
 {
@@ -73,6 +74,9 @@ namespace CharliesSnackBar.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
+                    var user = _db.Users.Where(x => x.Email == model.Email).FirstOrDefault();
+                    var count = _db.ShoppingCart.Where(x => x.ApplicationUserId == user.Id).ToList().Count();
+                    HttpContext.Session.SetInt32("CartCount", count);
                     _logger.LogInformation("User logged in.");
                     return RedirectToLocal(returnUrl);
                 }
@@ -258,6 +262,7 @@ namespace CharliesSnackBar.Controllers
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation("User created a new account with password.");
+                    HttpContext.Session.SetInt32("CartCount", 0);
                     return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);
