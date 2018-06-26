@@ -63,7 +63,7 @@
                         </div>
                     </li>
                 }
-                @if (User.IsInRole(SD.AdminEndUser))
+                @if (User.IsInRole(SD.AdminEndUser) || User.IsInRole(SD.CustomerEndUser))
                 {
                     @if (HttpContextAccessor.HttpContext.Session.GetInt32("CartCount") != null)
                     {
