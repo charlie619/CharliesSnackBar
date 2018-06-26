@@ -8,6 +8,8 @@ using CharliesSnackBar.Models;
 using CharliesSnackBar.Data;
 using CharliesSnackBar.Models.HomeViewModel;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CharliesSnackBar.Controllers
 {
@@ -31,9 +33,11 @@ namespace CharliesSnackBar.Controllers
                 Coupons = _db.Coupons.Where(x =>x.IsActive == true).ToList()
             };
             return View(IndexVM);
-        }      
-        
+        }
+
         // GET : Details
+
+        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
             var menuItemFromDb = await _db.MenuItem.Include(x => x.Category)
@@ -50,9 +54,52 @@ namespace CharliesSnackBar.Controllers
             return View(cartObj);
         }
 
-        public IActionResult Error()
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(ShoppingCart cartObj)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            cartObj.Id = 0;
+            if (ModelState.IsValid)
+            {
+                var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+                var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                cartObj.ApplicationUserId = claim.Value;
+
+                var cartFromDb = await _db.ShoppingCart.Where(x => x.ApplicationUserId == cartObj.ApplicationUserId
+                                 && x.MenuItemId == cartObj.MenuItemId).FirstOrDefaultAsync();
+
+                if (cartFromDb == null)
+                {
+                    //this menu item does not exists
+                    _db.ShoppingCart.Add(cartObj);
+                }
+                else
+                {
+                    //menu item exists in shopping cart for that user, so just update the count
+                    cartFromDb.Count = cartFromDb.Count + cartObj.Count;
+                }
+
+                await _db.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                var menuItemFromDb = await _db.MenuItem.Include(x => x.Category)
+                .Include(x => x.SubCategory)
+                .Where(x => x.Id == cartObj.MenuItemId)
+                .FirstOrDefaultAsync();
+
+                var cartObj1 = new ShoppingCart()
+                {
+                    MenuItem = menuItemFromDb,
+                    MenuItemId = menuItemFromDb.Id
+                };
+
+                return View(cartObj1);
+            }
         }
+
+        
     }
 }
