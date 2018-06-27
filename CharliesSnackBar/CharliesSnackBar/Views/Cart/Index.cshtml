@@ -154,7 +154,35 @@
             $('#timepicker').timepicker({
                 'minTime': minTime,
                 'maxTime': '09:00pm'
+            });
+        });
+
+        $('#btnCoupon').click(function () {
+            var couponCode = document.getElementById("couponCode").value;
+            var orderTotal = document.getElementById("orderTotal").value;
+
+            $.ajax({
+                url: '/API/CouponsAPI?orderTotal=' + orderTotal + '&couponCode=' + couponCode,
+                type: 'GET',
+                dataType: 'text',
+                success: function (data, textStatus, xhr) {
+                    var splitData = data.split(":");
+
+                    if (splitData[1]=='E') {
+                        //Error
+                        alert("Coupon is either invalid or does not meet the criteria.");
+                    } else {
+                        //Success
+                        $('#orderTotal').attr('value', Math.round(splitData[0] * 100) / 100);
+                        document.getElementById('couponCode').readonly = true;
+                        document.getElementById('btnCoupon').style.display = 'none';
+                        document.getElementById('btnRemoveCoupon').style.display = '';
+
+                    }
+                }
+
             })
-        })
+        });
+
     </script>
 }
