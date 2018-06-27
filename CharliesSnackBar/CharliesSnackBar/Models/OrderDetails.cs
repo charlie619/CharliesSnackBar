@@ -30,7 +30,7 @@ namespace CharliesSnackBar.Models
         public string Description { get; set; }
 
         [Required]
-        public string Price { get; set; }
+        public double Price { get; set; }
 
     }
 }

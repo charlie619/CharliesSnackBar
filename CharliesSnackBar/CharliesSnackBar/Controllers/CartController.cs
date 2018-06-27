@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CharliesSnackBar.Data;
 using CharliesSnackBar.Models;
 using CharliesSnackBar.Models.OrderDetailsViewModel;
+using CharliesSnackBar.Utility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,9 @@ namespace CharliesSnackBar.Controllers
     {
         private readonly ApplicationDbContext _db;
 
+        [BindProperty]
+        public OrderDetailsCart detailCart { get; set; }
+
         public CartController(ApplicationDbContext db)
         {
             _db = db;
@@ -23,7 +27,7 @@ namespace CharliesSnackBar.Controllers
         // GET : Cart/Index
         public IActionResult Index()
         {
-            var detailCart = new OrderDetailsCart()
+            detailCart = new OrderDetailsCart()
             {
                 OrderHeader = new OrderHeader()
             };
@@ -44,7 +48,7 @@ namespace CharliesSnackBar.Controllers
                 list.MenuItem = _db.MenuItem.FirstOrDefault(x => x.Id == list.MenuItemId);
                 detailCart.OrderHeader.OrderTotal += (list.MenuItem.Price * list.Count);
 
-                if (list.MenuItem.Description.Length>100)
+                if (list.MenuItem.Description.Length > 100)
                 {
                     list.MenuItem.Description = list.MenuItem.Description.Substring(0, 99) + "...";
                 }
@@ -52,6 +56,45 @@ namespace CharliesSnackBar.Controllers
 
             detailCart.OrderHeader.PickUp = DateTime.Now;
             return View(detailCart);
+        }
+
+        // POST : Cart/Index
+        [HttpPost, ActionName("Index")]
+        [ValidateAntiForgeryToken]
+        public IActionResult IndexPost()
+        {
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            detailCart.listCart = _db.ShoppingCart.Where(x => x.ApplicationUserId == claim.Value).ToList();
+
+            detailCart.OrderHeader.OrderDate = DateTime.Now;
+            detailCart.OrderHeader.UserId = claim.Value;
+            detailCart.OrderHeader.Status = SD.StatusSubmitted;
+            var orderHeader = detailCart.OrderHeader;
+            _db.OrderHeader.Add(orderHeader);
+            _db.SaveChanges();
+
+            foreach (var item in detailCart.listCart)
+            {
+                item.MenuItem = _db.MenuItem.FirstOrDefault(x => x.Id == item.MenuItemId);
+                var orderDetails = new OrderDetails
+                {
+                    MenuItemId = item.MenuItemId,
+                    OrderId = orderHeader.Id,
+                    Description = item.MenuItem.Description,
+                    Name = item.MenuItem.Name,
+                    Price = item.MenuItem.Price,
+                    Count = item.Count
+                };
+                _db.OrderDetails.Add(orderDetails);
+            }
+
+            _db.ShoppingCart.RemoveRange(detailCart.listCart);
+            _db.SaveChanges();
+            HttpContext.Session.SetInt32("CartCount", 0);
+
+            return RedirectToAction("Index", "Home");
         }
 
         // Adding 1 count of an item in shopping cart
@@ -68,7 +111,7 @@ namespace CharliesSnackBar.Controllers
         public IActionResult Minus(int cartId)
         {
             var cart = _db.ShoppingCart.Where(x => x.Id == cartId).FirstOrDefault();
-            if (cart.Count==1)
+            if (cart.Count == 1)
             {
                 _db.ShoppingCart.Remove(cart);
                 _db.SaveChanges();
@@ -84,8 +127,5 @@ namespace CharliesSnackBar.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-
-
     }
 }
