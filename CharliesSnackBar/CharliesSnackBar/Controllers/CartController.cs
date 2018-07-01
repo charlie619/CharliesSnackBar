@@ -94,7 +94,7 @@ namespace CharliesSnackBar.Controllers
             _db.SaveChanges();
             HttpContext.Session.SetInt32("CartCount", 0);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Confirm", "Order", new { id = orderHeader.Id });
         }
 
         // Adding 1 count of an item in shopping cart
