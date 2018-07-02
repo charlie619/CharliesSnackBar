@@ -156,7 +156,6 @@ namespace CharliesSnackBar.Controllers
                         OrderDetailsVM.Add(individual);
                     }
                 }
-
             }
             else
             {
