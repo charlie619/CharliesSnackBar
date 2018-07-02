@@ -34,5 +34,25 @@ namespace CharliesSnackBar.Controllers
 
             return View(OrderDetailsViewModel);
         }
+
+        [Authorize]
+        public IActionResult OrderHistory()
+        {
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            var OrderDetailsVM = new List<OrderDetailsViewModel>();
+
+            var orderHeaderList = _db.OrderHeader.Where(x => x.UserId == claim.Value).OrderByDescending(x => x.OrderDate).ToList();
+
+            foreach (var item in orderHeaderList)
+            {
+                var individual = new OrderDetailsViewModel();
+                individual.OrderHeader = item;
+                individual.OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList();
+                OrderDetailsVM.Add(individual);
+            }
+            return View(OrderDetailsVM);
+        }
     }
 }
