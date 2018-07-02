@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CharliesSnackBar.Data;
+using CharliesSnackBar.Models;
 using CharliesSnackBar.Models.OrderDetailsViewModel;
 using CharliesSnackBar.Utility;
 using Microsoft.AspNetCore.Authorization;
@@ -48,9 +49,11 @@ namespace CharliesSnackBar.Controllers
 
             foreach (var item in orderHeaderList)
             {
-                var individual = new OrderDetailsViewModel();
-                individual.OrderHeader = item;
-                individual.OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList();
+                var individual = new OrderDetailsViewModel
+                {
+                    OrderHeader = item,
+                    OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList()
+                };
                 OrderDetailsVM.Add(individual);
             }
             return View(OrderDetailsVM);
@@ -65,9 +68,11 @@ namespace CharliesSnackBar.Controllers
 
             foreach (var item in orderHeaderList)
             {
-                var individual = new OrderDetailsViewModel();
-                individual.OrderHeader = item;
-                individual.OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList();
+                var individual = new OrderDetailsViewModel
+                {
+                    OrderHeader = item,
+                    OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList()
+                };
                 OrderDetailsVM.Add(individual);
             }
             return View(OrderDetailsVM);
@@ -107,18 +112,66 @@ namespace CharliesSnackBar.Controllers
 
         // GET : Order Pickup
         [Authorize(Roles = SD.AdminEndUser)]
-        public IActionResult OrderPickup()
+        public IActionResult OrderPickup(string searchEmail=null,string searchPhone=null,string searchOrder=null)
         {
             var OrderDetailsVM = new List<OrderDetailsViewModel>();
-            var orderHeaderList = _db.OrderHeader.Where(x => x.Status == SD.StatusReady || x.Status == SD.StatusInProgress)
+
+            if (searchEmail != null || searchOrder != null || searchPhone != null)
+            {
+                //filtering the criteria
+                var user = new ApplicationUser();
+                var orderHeaderList = new List<OrderHeader>();
+
+                if (searchOrder!=null)
+                {
+                    orderHeaderList = _db.OrderHeader.Where(x => x.Id == Convert.ToInt32(searchOrder)).ToList();
+                }
+                else
+                {
+                    if (searchEmail!=null)
+                    {
+                        user = _db.Users.Where(x => x.Email.ToLower().Contains(searchEmail.ToLower())).FirstOrDefault();
+                    }
+                    else
+                    {
+                        if (searchPhone != null)
+                        {
+                            user = _db.Users.Where(x => x.PhoneNumber.ToLower().Contains(searchPhone.ToLower())).FirstOrDefault();
+                        }
+                    }
+                }
+                if (user!=null||orderHeaderList.Count>0)
+                {
+                    if (orderHeaderList.Count==0)
+                    {
+                        orderHeaderList = _db.OrderHeader.Where(x => x.UserId == user.Id).OrderByDescending(x => x.OrderDate).ToList();
+                    }
+                    foreach (var item in orderHeaderList)
+                    {
+                        var individual = new OrderDetailsViewModel
+                        {
+                            OrderHeader = item,
+                            OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList()
+                        };
+                        OrderDetailsVM.Add(individual);
+                    }
+                }
+
+            }
+            else
+            {
+                var orderHeaderList = _db.OrderHeader.Where(x => x.Status == SD.StatusReady || x.Status == SD.StatusInProgress)
                 .OrderByDescending(x => x.PickUp).ToList();
 
-            foreach (var item in orderHeaderList)
-            {
-                var individual = new OrderDetailsViewModel();
-                individual.OrderHeader = item;
-                individual.OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList();
-                OrderDetailsVM.Add(individual);
+                foreach (var item in orderHeaderList)
+                {
+                    var individual = new OrderDetailsViewModel
+                    {
+                        OrderHeader = item,
+                        OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList()
+                    };
+                    OrderDetailsVM.Add(individual);
+                }
             }
             return View(OrderDetailsVM);
         }
