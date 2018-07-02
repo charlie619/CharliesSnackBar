@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using CharliesSnackBar.Data;
 using CharliesSnackBar.Models.OrderDetailsViewModel;
+using CharliesSnackBar.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,6 +54,24 @@ namespace CharliesSnackBar.Controllers
                 OrderDetailsVM.Add(individual);
             }
             return View(OrderDetailsVM);
+        }
+
+        [Authorize(Roles = SD.AdminEndUser)]
+        public IActionResult ManageOrder()
+        {
+            var OrderDetailsVM = new List<OrderDetailsViewModel>();
+            var orderHeaderList = _db.OrderHeader.Where(x => x.Status == SD.StatusSubmitted || x.Status == SD.StatusInProgress)
+                .OrderByDescending(x => x.PickUp).ToList();
+
+            foreach (var item in orderHeaderList)
+            {
+                var individual = new OrderDetailsViewModel();
+                individual.OrderHeader = item;
+                individual.OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList();
+                OrderDetailsVM.Add(individual);
+            }
+            return View(OrderDetailsVM);
+
         }
     }
 }
