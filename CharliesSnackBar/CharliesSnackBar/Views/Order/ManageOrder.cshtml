@@ -20,22 +20,22 @@
                     @if (item.OrderHeader.Status.Equals(SD.StatusSubmitted))
                     {
                         <button type="submit" asp-action="OrderPrepare" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-primary form-control">
-                            <i class="fas fa-check"></i>Start Cooking
+                            <i class="fas fa-check"></i>&nbsp; Start Cooking
                         </button>
                         <button type="submit" asp-action="OrderCancel" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-danger form-control">
-                            <i class="fas fa-times"></i>Cancel Order
+                            <i class="fas fa-times"></i>&nbsp;Cancel Order
                         </button>
                     }
                     else
                     {
                         @if (item.OrderHeader.Status.Equals(SD.StatusInProgress))
                         {
-                            <button type="submit" asp-action="OrderReady" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-success form-control">
-                                <i class="fas fa-flag-checkered"></i>Start Prepared
-                            </button>
-                            <button type="submit" asp-action="OrderCancel" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-danger form-control">
-                                <i class="fas fa-times"></i>Cancel Order
-                            </button>
+                        <button type="submit" asp-action="OrderReady" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-success form-control">
+                            <i class="fas fa-flag-checkered"></i>&nbsp;Start Prepared
+                        </button>
+                        <button type="submit" asp-action="OrderCancel" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-danger form-control">
+                            <i class="fas fa-times"></i>&nbsp;Cancel Order
+                        </button>
                         }
                     }
                 </div>
