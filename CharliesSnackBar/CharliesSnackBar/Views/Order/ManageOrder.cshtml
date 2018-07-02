@@ -19,10 +19,10 @@
                 <div class="col-2">
                     @if (item.OrderHeader.Status.Equals(SD.StatusSubmitted))
                     {
-                        <button type="submit" asp-action="OrderPrepare" asp-route-id="@item.OrderHeader.Id" class="btn btn-primary form-control">
+                        <button type="submit" asp-action="OrderPrepare" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-primary form-control">
                             <i class="fas fa-check"></i>Start Cooking
                         </button>
-                        <button type="submit" asp-action="OrderPrepare" asp-route-id="@item.OrderHeader.Id" class="btn btn-danger form-control">
+                        <button type="submit" asp-action="OrderCancel" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-danger form-control">
                             <i class="fas fa-times"></i>Cancel Order
                         </button>
                     }
@@ -30,10 +30,10 @@
                     {
                         @if (item.OrderHeader.Status.Equals(SD.StatusInProgress))
                         {
-                            <button type="submit" asp-action="OrderReady" asp-route-id="@item.OrderHeader.Id" class="btn btn-success form-control">
+                            <button type="submit" asp-action="OrderReady" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-success form-control">
                                 <i class="fas fa-flag-checkered"></i>Start Prepared
                             </button>
-                            <button type="submit" asp-action="OrderPrepare" asp-route-id="@item.OrderHeader.Id" class="btn btn-danger form-control">
+                            <button type="submit" asp-action="OrderCancel" asp-route-orderid="@item.OrderHeader.Id" class="btn btn-danger form-control">
                                 <i class="fas fa-times"></i>Cancel Order
                             </button>
                         }

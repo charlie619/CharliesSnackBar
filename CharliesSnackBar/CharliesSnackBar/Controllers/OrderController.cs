@@ -19,7 +19,7 @@ namespace CharliesSnackBar.Controllers
             _db = db;
         }
 
-        // GET : Confirm 
+        // GET : Confirm (Place Order)
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Confirm(int id)
@@ -71,7 +71,39 @@ namespace CharliesSnackBar.Controllers
                 OrderDetailsVM.Add(individual);
             }
             return View(OrderDetailsVM);
-
         }
+
+        [Authorize(Roles = SD.AdminEndUser)]
+        public async Task<IActionResult> OrderPrepare(int orderId)
+        {
+            var orderHeader = _db.OrderHeader.Find(orderId);
+            orderHeader.Status = SD.StatusInProgress;
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("ManageOrder","Order");
+        }
+
+
+        [Authorize(Roles = SD.AdminEndUser)]
+        public async Task<IActionResult> OrderReady(int orderId)
+        {
+            var orderHeader = _db.OrderHeader.Find(orderId);
+            orderHeader.Status = SD.StatusReady;
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("ManageOrder", "Order");
+        }
+
+
+        [Authorize(Roles = SD.AdminEndUser)]
+        public async Task<IActionResult> OrderCancel(int orderId)
+        {
+            var orderHeader = _db.OrderHeader.Find(orderId);
+            orderHeader.Status = SD.StatusCancelled;
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("ManageOrder", "Order");
+        }
+
     }
 }
