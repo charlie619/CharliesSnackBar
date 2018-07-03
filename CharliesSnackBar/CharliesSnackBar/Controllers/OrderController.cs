@@ -187,5 +187,16 @@ namespace CharliesSnackBar.Controllers
 
             return View(orderDetailsVM);
         }
+
+        [HttpPost,ActionName("OrderPickupDetails")]
+        [Authorize(Roles = SD.AdminEndUser)]
+        public async Task<IActionResult> OrderPickupDetailsPost(int orderid)
+        {
+            var orderHeader = _db.OrderHeader.Find(orderid);
+            orderHeader.Status = SD.StatusCompleted;
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("OrderPickup", "Order");
+        }
     }
 }
