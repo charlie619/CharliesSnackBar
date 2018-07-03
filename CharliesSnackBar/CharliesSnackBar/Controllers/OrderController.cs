@@ -85,7 +85,7 @@ namespace CharliesSnackBar.Controllers
             orderHeader.Status = SD.StatusInProgress;
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("ManageOrder","Order");
+            return RedirectToAction("ManageOrder", "Order");
         }
 
 
@@ -112,7 +112,7 @@ namespace CharliesSnackBar.Controllers
 
         // GET : Order Pickup
         [Authorize(Roles = SD.AdminEndUser)]
-        public IActionResult OrderPickup(string searchEmail=null,string searchPhone=null,string searchOrder=null)
+        public IActionResult OrderPickup(string searchEmail = null, string searchPhone = null, string searchOrder = null)
         {
             var OrderDetailsVM = new List<OrderDetailsViewModel>();
 
@@ -122,13 +122,13 @@ namespace CharliesSnackBar.Controllers
                 var user = new ApplicationUser();
                 var orderHeaderList = new List<OrderHeader>();
 
-                if (searchOrder!=null)
+                if (searchOrder != null)
                 {
                     orderHeaderList = _db.OrderHeader.Where(x => x.Id == Convert.ToInt32(searchOrder)).ToList();
                 }
                 else
                 {
-                    if (searchEmail!=null)
+                    if (searchEmail != null)
                     {
                         user = _db.Users.Where(x => x.Email.ToLower().Contains(searchEmail.ToLower())).FirstOrDefault();
                     }
@@ -140,9 +140,9 @@ namespace CharliesSnackBar.Controllers
                         }
                     }
                 }
-                if (user!=null||orderHeaderList.Count>0)
+                if (user != null || orderHeaderList.Count > 0)
                 {
-                    if (orderHeaderList.Count==0)
+                    if (orderHeaderList.Count == 0)
                     {
                         orderHeaderList = _db.OrderHeader.Where(x => x.UserId == user.Id).OrderByDescending(x => x.OrderDate).ToList();
                     }
@@ -175,6 +175,17 @@ namespace CharliesSnackBar.Controllers
             return View(OrderDetailsVM);
         }
 
+        [Authorize(Roles = SD.AdminEndUser)]
+        public IActionResult OrderPickupDetails(int orderid)
+        {
+            var orderDetailsVM = new OrderDetailsViewModel
+            {
+                OrderHeader = _db.OrderHeader.Where(x => x.Id == orderid).FirstOrDefault()
+            };
+            orderDetailsVM.OrderHeader.ApplicationUser = _db.Users.Where(x => x.Id == orderDetailsVM.OrderHeader.UserId).FirstOrDefault();
+            orderDetailsVM.OrderDetails = _db.OrderDetails.Where(x => x.OrderId == orderDetailsVM.OrderHeader.Id).ToList();
 
+            return View(orderDetailsVM);
+        }
     }
 }
