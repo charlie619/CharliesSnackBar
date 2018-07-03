@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using CharliesSnackBar.Data;
 using CharliesSnackBar.Models;
@@ -198,5 +201,69 @@ namespace CharliesSnackBar.Controllers
 
             return RedirectToAction("OrderPickup", "Order");
         }
+
+        //GET : Order Summary Export
+        public IActionResult OrderSummaryExport()
+        {
+            return View();
+        }
+
+        //POST : Order Summary Export
+        [HttpPost]
+        public IActionResult OrderSummaryExport(OrderExportViewModel orderExportVM)
+        {
+            var OrderHeaderList = _db.OrderHeader.Where(o => o.OrderDate >= orderExportVM.startDate && o.OrderDate <= orderExportVM.endDate).ToList();
+            var OrderDetailList = new List<OrderDetails>();
+            var IndividualOrderList = new List<OrderDetails>();
+            foreach (var OrderHeader in OrderHeaderList)
+            {
+                IndividualOrderList = _db.OrderDetails.Where(o => o.OrderId == OrderHeader.Id).ToList();
+
+                foreach (var individualOrder in IndividualOrderList)
+                {
+                    OrderDetailList.Add(individualOrder);
+                }
+            }
+
+            byte[] bytes = Encoding.ASCII.GetBytes(ConvertToString(OrderDetailList));
+            return File(bytes, "application/text", "OrderDetail.csv");
+        }
+
+        public String ConvertToString<T>(IList<T> data)
+        {
+
+            var properties = TypeDescriptor.GetProperties(typeof(T));
+            var table = new DataTable();
+            foreach (PropertyDescriptor prop in properties)
+            {
+                table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
+            }
+            foreach (T item in data)
+            {
+                var row = table.NewRow();
+                foreach (PropertyDescriptor prop in properties)
+                {
+                    row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
+                }
+                table.Rows.Add(row);
+            }
+            table.Columns.Remove("OrderHeader");
+            table.Columns.Remove("MenuItemId");
+            table.Columns.Remove("MenuItem");
+            table.Columns.Remove("Description");
+
+            var sb = new StringBuilder();
+
+            var columnNames = table.Columns.Cast<DataColumn>().
+                                              Select(column => column.ColumnName);
+            sb.AppendLine(string.Join(",", columnNames));
+            foreach (DataRow row in table.Rows)
+            {
+                var fields = row.ItemArray.Select(field => field.ToString());
+                sb.AppendLine(string.Join(",", fields));
+            }
+            return sb.ToString();
+        }
+
     }
 }
