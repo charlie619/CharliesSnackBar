@@ -18,6 +18,7 @@ namespace CharliesSnackBar.Controllers
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private int PageSize = 2;
         public OrderController(ApplicationDbContext db)
         {
             _db = db;
@@ -41,12 +42,15 @@ namespace CharliesSnackBar.Controllers
         }
 
         [Authorize]
-        public IActionResult OrderHistory()
+        public IActionResult OrderHistory(int productPage=1)
         {
             var claimsIdentity = (ClaimsIdentity)this.User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            var OrderDetailsVM = new List<OrderDetailsViewModel>();
+            var orderListVM = new OrderListViewModel()
+            {
+                Orders = new List<OrderDetailsViewModel>()
+            };
 
             var orderHeaderList = _db.OrderHeader.Where(x => x.UserId == claim.Value).OrderByDescending(x => x.OrderDate).ToList();
 
@@ -57,9 +61,21 @@ namespace CharliesSnackBar.Controllers
                     OrderHeader = item,
                     OrderDetails = _db.OrderDetails.Where(x => x.OrderId == item.Id).ToList()
                 };
-                OrderDetailsVM.Add(individual);
+                orderListVM.Orders.Add(individual);
             }
-            return View(OrderDetailsVM);
+            var count = orderListVM.Orders.Count();
+            orderListVM.Orders = orderListVM.Orders.OrderBy(x => x.OrderHeader.Id)
+                .Skip((productPage - 1) * PageSize)
+                .Take(PageSize).ToList();
+
+            orderListVM.PagingInfo = new PagingInfo
+            {
+                CurrentPage = productPage,
+                ItemsPerPage = PageSize,
+                TotalItem = count
+            };
+
+            return View(orderListVM);
         }
 
         [Authorize(Roles = SD.AdminEndUser)]
