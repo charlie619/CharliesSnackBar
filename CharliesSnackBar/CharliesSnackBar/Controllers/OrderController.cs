@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CharliesSnackBar.Data;
 using CharliesSnackBar.Models;
 using CharliesSnackBar.Models.OrderDetailsViewModel;
+using CharliesSnackBar.Services;
 using CharliesSnackBar.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,12 @@ namespace CharliesSnackBar.Controllers
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly IEmailSender _emailSender;
         private int PageSize = 2;
-        public OrderController(ApplicationDbContext db)
+        public OrderController(ApplicationDbContext db, IEmailSender emailSender)
         {
             _db = db;
+            _emailSender = emailSender;
         }
 
         // GET : Confirm (Place Order)
@@ -37,6 +40,8 @@ namespace CharliesSnackBar.Controllers
                 OrderHeader = _db.OrderHeader.Where(x => x.Id == id && x.UserId == claim.Value).FirstOrDefault(),
                 OrderDetails = _db.OrderDetails.Where(x => x.OrderId == id).ToList()
             };
+            var customerEmail = _db.Users.Where(x => x.Id == OrderDetailsViewModel.OrderHeader.UserId).FirstOrDefault().Email;
+            await _emailSender.SecondOrderStatusAsync(customerEmail, OrderDetailsViewModel.OrderHeader.Id.ToString(), SD.StatusSubmitted);
 
             return View(OrderDetailsViewModel);
         }
@@ -114,6 +119,9 @@ namespace CharliesSnackBar.Controllers
             var orderHeader = _db.OrderHeader.Find(orderId);
             orderHeader.Status = SD.StatusReady;
             await _db.SaveChangesAsync();
+            var customerEmail = _db.Users.Where(x => x.Id == orderHeader.UserId).FirstOrDefault().Email;
+            await _emailSender.SecondOrderStatusAsync(customerEmail, orderHeader.Id.ToString(), SD.StatusReady);
+
 
             return RedirectToAction("ManageOrder", "Order");
         }
@@ -125,7 +133,8 @@ namespace CharliesSnackBar.Controllers
             var orderHeader = _db.OrderHeader.Find(orderId);
             orderHeader.Status = SD.StatusCancelled;
             await _db.SaveChangesAsync();
-
+            var customerEmail = _db.Users.Where(x => x.Id == orderHeader.UserId).FirstOrDefault().Email;
+            await _emailSender.SecondOrderStatusAsync(customerEmail, orderHeader.Id.ToString(), SD.StatusCancelled);
             return RedirectToAction("ManageOrder", "Order");
         }
 

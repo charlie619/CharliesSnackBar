@@ -16,13 +16,13 @@ namespace CharliesSnackBar.Services
             var client = new SmtpClient("smtp.gmail.com", 587)
             {
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("charlie.admin@gmail.com", "passwordHere"),
+                Credentials = new NetworkCredential("validEmailId@gmail.com", "validPassword"), //This account will be used to send Emails
                 EnableSsl = true
             };
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress("charlie.admin@gmail.com")
+                From = new MailAddress("validEmailId@gmail.com")
             };
             mailMessage.To.Add(email);
             mailMessage.Body = message;
