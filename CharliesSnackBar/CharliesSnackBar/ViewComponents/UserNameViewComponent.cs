@@ -23,7 +23,7 @@ namespace CharliesSnackBar.ViewComponents
             var claimsIdentity = (ClaimsIdentity)this.User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            var userFromDb = _db.Users.Where(x => x.Id == claim.Value).FirstOrDefaultAsync();
+            var userFromDb = await _db.Users.Where(x => x.Id == claim.Value).FirstOrDefaultAsync();
 
             return View(userFromDb);
         }
