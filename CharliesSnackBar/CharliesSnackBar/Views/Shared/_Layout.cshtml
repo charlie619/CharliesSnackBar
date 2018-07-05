@@ -19,7 +19,7 @@
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/site.css" />        
         <link href="~/css/Typeahead.css" rel="stylesheet" />
         <link href="~/css/jquery-ui.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css" />
@@ -32,6 +32,9 @@
 
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
+
+                @{ var user1 = User.Identity.Name;
+                    var user2 = User.IsInRole(SD.AdminEndUser);}
 
                 @if (User.IsInRole(SD.AdminEndUser) || User.IsInRole(SD.CustomerEndUser))
                 {
