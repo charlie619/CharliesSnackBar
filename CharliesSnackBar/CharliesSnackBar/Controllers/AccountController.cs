@@ -246,6 +246,17 @@ namespace CharliesSnackBar.Controllers
                     if (! await _roleManager.RoleExistsAsync(SD.AdminEndUser))
                     {
                         await _roleManager.CreateAsync(new IdentityRole(SD.AdminEndUser));
+                        var userAdmin = new ApplicationUser
+                        {
+                            UserName = "charlie.admin@gmail.com",
+                            Email = "charlie.admin@gmail.com",
+                            PhoneNumber = "1112223333",
+                            FirstName = "Charlie",
+                            LastName = "Admin"
+                        };
+                        var resultAdmin = await _userManager.CreateAsync(userAdmin, "Abc@123");
+                        await _userManager.AddToRoleAsync(user, SD.AdminEndUser);
+
                     }
                     if (!await _roleManager.RoleExistsAsync(SD.CustomerEndUser))
                     {
