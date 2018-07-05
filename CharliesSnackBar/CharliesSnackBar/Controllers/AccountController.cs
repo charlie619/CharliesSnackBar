@@ -255,7 +255,7 @@ namespace CharliesSnackBar.Controllers
                             LastName = "Admin"
                         };
                         var resultAdmin = await _userManager.CreateAsync(userAdmin, "Abc@123");
-                        await _userManager.AddToRoleAsync(user, SD.AdminEndUser);
+                        await _userManager.AddToRoleAsync(userAdmin, SD.AdminEndUser);
 
                     }
                     if (!await _roleManager.RoleExistsAsync(SD.CustomerEndUser))
