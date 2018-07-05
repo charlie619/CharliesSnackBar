@@ -6,4 +6,8 @@ Tools & Technologies
 Visual Studo 2017, MSSMS 2017, ASP.NET MVC CORE 2.0, Entity Framework 7, Bootstrap V4, Tag Helper. 
 
 
-In the end, I will deploy this Web App and SQL Database on Azure.
+https://charliessnackbar.azurewebsites.net/
+
+All the main features are enabled for Admin User.
+Id: charlie.admin@gmail.com
+password: Abc@123
