@@ -41,7 +41,7 @@ namespace CharliesSnackBar.Controllers
                 OrderDetails = _db.OrderDetails.Where(x => x.OrderId == id).ToList()
             };
             var customerEmail = _db.Users.Where(x => x.Id == OrderDetailsViewModel.OrderHeader.UserId).FirstOrDefault().Email;
-            await _emailSender.SecondOrderStatusAsync(customerEmail, OrderDetailsViewModel.OrderHeader.Id.ToString(), SD.StatusSubmitted);
+            //await _emailSender.SecondOrderStatusAsync(customerEmail, OrderDetailsViewModel.OrderHeader.Id.ToString(), SD.StatusSubmitted);
 
             return View(OrderDetailsViewModel);
         }
@@ -120,7 +120,7 @@ namespace CharliesSnackBar.Controllers
             orderHeader.Status = SD.StatusReady;
             await _db.SaveChangesAsync();
             var customerEmail = _db.Users.Where(x => x.Id == orderHeader.UserId).FirstOrDefault().Email;
-            await _emailSender.SecondOrderStatusAsync(customerEmail, orderHeader.Id.ToString(), SD.StatusReady);
+            //await _emailSender.SecondOrderStatusAsync(customerEmail, orderHeader.Id.ToString(), SD.StatusReady);
 
 
             return RedirectToAction("ManageOrder", "Order");
@@ -134,7 +134,7 @@ namespace CharliesSnackBar.Controllers
             orderHeader.Status = SD.StatusCancelled;
             await _db.SaveChangesAsync();
             var customerEmail = _db.Users.Where(x => x.Id == orderHeader.UserId).FirstOrDefault().Email;
-            await _emailSender.SecondOrderStatusAsync(customerEmail, orderHeader.Id.ToString(), SD.StatusCancelled);
+            //await _emailSender.SecondOrderStatusAsync(customerEmail, orderHeader.Id.ToString(), SD.StatusCancelled);
             return RedirectToAction("ManageOrder", "Order");
         }
 
