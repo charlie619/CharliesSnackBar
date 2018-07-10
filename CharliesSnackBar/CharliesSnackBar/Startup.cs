@@ -41,7 +41,11 @@ namespace CharliesSnackBar
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
-
+            services.AddAuthentication().AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = "252168258704527";
+                facebookOptions.AppSecret = "********************";
+            });
             services.AddMvc();
             services.AddSession(option =>
             {
