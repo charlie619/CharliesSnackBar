@@ -11,5 +11,17 @@ namespace CharliesSnackBar.Models.AccountViewModels
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
+        [Required]
+        [Display(Name ="First Name")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Phone No")]
+        public string PhoneNo { get; set; }
     }
 }

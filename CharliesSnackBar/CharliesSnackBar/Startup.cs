@@ -44,7 +44,7 @@ namespace CharliesSnackBar
             services.AddAuthentication().AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = "252168258704527";
-                facebookOptions.AppSecret = "********************";
+                facebookOptions.AppSecret = "*********************";
             });
             services.AddMvc();
             services.AddSession(option =>
